@@ -17,11 +17,12 @@ package org.pentaho.metaverse.api.model;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.KeyIndexableGraph;
 import com.tinkerpop.blueprints.util.wrappers.id.IdGraph;
-import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration2.Configuration;
 import org.pentaho.metaverse.api.messages.Messages;
 
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -53,10 +54,16 @@ public class BaseSynchronizedGraphFactory {
    *
    * @param configuration The graph configuration
    * @return {@link BaseSynchronizedGraph} instance {@link com.tinkerpop.blueprints.KeyIndexableGraph}
-   * @see com.tinkerpop.blueprints.GraphFactory#open(org.apache.commons.configuration.Configuration)
+   * @see com.tinkerpop.blueprints.GraphFactory#open(java.util.Map)
    */
   public static Graph open( final Configuration configuration ) {
-    Graph graph = com.tinkerpop.blueprints.GraphFactory.open( configuration );
+    final Map<String, String> graphProps = new HashMap<>();
+    final Iterator<String> keys = configuration.getKeys();
+    while ( keys.hasNext() ) {
+      final String key = keys.next();
+      graphProps.put( key, configuration.getString( key ) );
+    }
+    Graph graph = com.tinkerpop.blueprints.GraphFactory.open( graphProps );
     return wrapGraph( graph );
   }
 
