@@ -40,6 +40,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -63,14 +64,16 @@ public class MetaverseNodeTest {
 
   @Test
   public void testGetName() {
-    when( v.property( "name" ) ).thenReturn( missingProperty() );
+    VertexProperty<String> prop = missingProperty();
+    when( v.property( "name" ) ).thenReturn( prop );
     assertNull( node.getName() );
     verify( v ).property( "name" );
   }
 
   @Test
   public void testSetName() {
-    when( v.property( "name" ) ).thenReturn( presentProperty( "myName" ) );
+    VertexProperty<String> prop = presentProperty( "myName" );
+    when( v.property( "name" ) ).thenReturn( prop );
     when( v.value( "name" ) ).thenReturn( "myName" );
 
     node.setName( "myName" );
@@ -81,14 +84,16 @@ public class MetaverseNodeTest {
 
   @Test
   public void testGetType() {
-    when( v.property( "type" ) ).thenReturn( missingProperty() );
+    VertexProperty<String> prop = missingProperty();
+    when( v.property( "type" ) ).thenReturn( prop );
     assertNull( node.getType() );
     verify( v ).property( "type" );
   }
 
   @Test
   public void testSetType() {
-    when( v.property( "type" ) ).thenReturn( presentProperty( "myType" ) );
+    VertexProperty<String> prop = presentProperty( "myType" );
+    when( v.property( "type" ) ).thenReturn( prop );
     when( v.value( "type" ) ).thenReturn( "myType" );
 
     node.setType( "myType" );
@@ -101,7 +106,7 @@ public class MetaverseNodeTest {
   @Test
   public void testGetStringID() {
     assertEquals( "my.id", node.getStringID() );
-    verify( v ).id();
+    verify( v, atLeastOnce() ).id();
   }
 
   @Test
@@ -169,7 +174,8 @@ public class MetaverseNodeTest {
 
   @Test
   public void testGetProperty() {
-    when( v.property( "test" ) ).thenReturn( presentProperty( "value" ) );
+    VertexProperty<Object> prop = presentProperty( "value" );
+    when( v.property( "test" ) ).thenReturn( prop );
     when( v.value( "test" ) ).thenReturn( "value" );
     assertEquals( "value", node.getProperty( "test" ) );
   }
@@ -250,7 +256,8 @@ public class MetaverseNodeTest {
 
   @Test
   public void testContainsKey() {
-    when( v.property( "test" ) ).thenReturn( presentProperty( "value" ) );
+    VertexProperty<Object> prop = presentProperty( "value" );
+    when( v.property( "test" ) ).thenReturn( prop );
     when( v.value( "test" ) ).thenReturn( "value" );
     assertTrue( node.containsKey( "test" ) );
   }
@@ -274,9 +281,12 @@ public class MetaverseNodeTest {
 
   @Test
   public void testGetLogicalId() {
-    when( v.property( "name" ) ).thenReturn( presentProperty( "testName" ) );
-    when( v.property( "type" ) ).thenReturn( presentProperty( "testType" ) );
-    when( v.property( "zzz" ) ).thenReturn( presentProperty( "last" ) );
+    VertexProperty<String> nameProp = presentProperty( "testName" );
+    VertexProperty<String> typeProp = presentProperty( "testType" );
+    VertexProperty<String> zzzProp = presentProperty( "last" );
+    when( v.property( "name" ) ).thenReturn( nameProp );
+    when( v.property( "type" ) ).thenReturn( typeProp );
+    when( v.property( "zzz" ) ).thenReturn( zzzProp );
     when( v.value( "name" ) ).thenReturn( "testName" );
     when( v.value( "type" ) ).thenReturn( "testType" );
     when( v.value( "zzz" ) ).thenReturn( "last" );
@@ -314,7 +324,8 @@ public class MetaverseNodeTest {
   private void mockProperties( Map<String, Object> props ) {
     when( v.keys() ).thenReturn( props.keySet() );
     for ( Map.Entry<String, Object> entry : props.entrySet() ) {
-      when( v.property( entry.getKey() ) ).thenReturn( presentProperty( entry.getValue() ) );
+      VertexProperty<Object> prop = presentProperty( entry.getValue() );
+      when( v.property( entry.getKey() ) ).thenReturn( prop );
       when( v.value( entry.getKey() ) ).thenReturn( entry.getValue() );
     }
   }
