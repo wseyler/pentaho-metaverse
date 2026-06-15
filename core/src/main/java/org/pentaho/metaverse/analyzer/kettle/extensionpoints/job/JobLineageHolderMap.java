@@ -14,6 +14,7 @@
 package org.pentaho.metaverse.analyzer.kettle.extensionpoints.job;
 
 import com.google.common.collect.MapMaker;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.metaverse.analyzer.kettle.extensionpoints.trans.TransLineageHolderMap;
@@ -122,13 +123,9 @@ public class JobLineageHolderMap {
   }
 
   protected IMetaverseBuilder getDefaultMetaverseBuilder() {
-    // always try to get a new builder if this method is called. otherwise we will end up with overlapping graphs
-    IMetaverseBuilder newBuilder = new MetaverseBuilder();
-    if ( newBuilder == null ) {
-      return defaultMetaverseBuilder;
-    } else {
-      return newBuilder;
-    }
+    // Always create a fresh builder to avoid overlapping graphs.
+    // Uses TinkerGraph.open() directly per TinkerPop 3 migration.
+    return new MetaverseBuilder( TinkerGraph.open() );
   }
 
   protected void setDefaultMetaverseBuilder( IMetaverseBuilder builder ) {
